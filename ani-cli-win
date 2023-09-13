@@ -273,7 +273,7 @@ dep_ch "$player_fn" "curl" "sed" "grep"
 is_download=0
 quality=best
 scrape=query
-while getopts 'hdHq:' OPT; do
+while getopts 'hdHNq:' OPT; do
 	case $OPT in
 		h)
 			help_text
@@ -284,6 +284,11 @@ while getopts 'hdHq:' OPT; do
 			;;
 		H)
 			scrape=history
+			is_next=-1
+			;;
+		N)
+			scrape=history
+			is_next=0
 			;;
 		q)
 			quality=$OPTARG
@@ -308,7 +313,7 @@ case $scrape in
 		search_results=$(sed -n -E 's/\t[0-9]*//p' "$logfile")
 		[ -z "$search_results" ] && die "History is empty"
 		anime_selection "$search_results"
-		ep_choice_start=$(sed -n -E "s/${selection_id}\t//p" "$logfile")
+		ep_choice_start=$((sed -n -E "s/${selection_id}\t//p" "$logfile") + is_next=0)
 		;;
 esac
 
